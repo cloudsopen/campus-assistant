@@ -18,6 +18,12 @@
         tools:layout="@layout/fragment_placeholder" />
 
     <fragment
+        android:id="@+id/navigation_publish"
+        android:name="com.example.campusassistant.ui.PublishFragment"
+        android:label="发布"
+        tools:layout="@layout/fragment_publish" />
+
+    <fragment
         android:id="@+id/navigation_messages"
         android:name="com.example.campusassistant.ui.MessagesFragment"
         android:label="消息"
