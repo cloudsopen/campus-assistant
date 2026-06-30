@@ -1,6 +1,8 @@
 package com.example.campusassistant
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -22,6 +24,8 @@ class MainActivity : AppCompatActivity() {
             navView.setPadding(0, 0, 0, systemBars.bottom)
             insets
         }
+
+
 
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment

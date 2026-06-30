@@ -1,10 +1,13 @@
 package com.example.campusassistant.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
+import com.example.campusassistant.LostandFoundActivity
 import com.example.campusassistant.R
 
 class HomeFragment : Fragment() {
@@ -13,6 +16,14 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        val view = inflater.inflate(R.layout.fragment_home, container, false)
+
+        val lostAndFound: ImageView = view.findViewById(R.id.LostandFound)
+        lostAndFound.setOnClickListener {
+            val intent = Intent(requireContext(), LostandFoundActivity::class.java)
+            startActivity(intent)
+        }
+
+        return view
     }
 }

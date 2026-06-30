@@ -21,6 +21,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".LostandFoundActivity"
+            android:exported="false"
+            android:label="@string/title_activity_lostand_found"
+            android:theme="@style/Theme.CampusAssistant"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".LostandFoundAddActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
