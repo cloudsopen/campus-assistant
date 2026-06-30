@@ -15,7 +15,7 @@
         android:id="@+id/navigation_aid"
         android:name="com.example.campusassistant.ui.AidFragment"
         android:label="互助"
-        tools:layout="@layout/fragment_placeholder" />
+        tools:layout="@layout/fragment_aid" />
 
     <fragment
         android:id="@+id/navigation_publish"
