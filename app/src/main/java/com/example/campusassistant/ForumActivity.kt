@@ -38,6 +38,7 @@ class ForumActivity : ComponentActivity() {
                 ForumScreen(
                     forumDao = forumDao,
                     replyDao = replyDao,
+                    onBack = { finish() },
                     onShowToast = { msg -> Toast.makeText(this, msg, Toast.LENGTH_SHORT).show() }
                 )
             }
@@ -69,6 +70,7 @@ private fun formatTime(timestamp: Long): String {
 fun ForumScreen(
     forumDao: com.example.campusassistant.data.ForumPostDao,
     replyDao: com.example.campusassistant.data.ForumReplyDao,
+    onBack: () -> Unit,
     onShowToast: (String) -> Unit
 ) {
     // selectedPostId == null → 帖子列表页；!= null → 帖子详情页
@@ -78,6 +80,7 @@ fun ForumScreen(
         PostListScreen(
             forumDao = forumDao,
             onPostClick = { postId -> selectedPostId = postId },
+            onBack = onBack,
             onShowToast = onShowToast
         )
     } else {
@@ -98,6 +101,7 @@ fun ForumScreen(
 fun PostListScreen(
     forumDao: com.example.campusassistant.data.ForumPostDao,
     onPostClick: (Long) -> Unit,
+    onBack: () -> Unit,
     onShowToast: (String) -> Unit
 ) {
     var posts by remember { mutableStateOf<List<ForumPost>>(emptyList()) }
@@ -122,6 +126,9 @@ fun PostListScreen(
         topBar = {
             TopAppBar(
                 title = { Text("校园论坛", fontWeight = FontWeight.Bold) },
+                navigationIcon = {
+                    TextButton(onClick = onBack) { Text("← 返回") }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
