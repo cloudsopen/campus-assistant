@@ -18,9 +18,6 @@ import com.example.campusassistant.data.LostItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import android.app.DatePickerDialog
-import java.util.Calendar
-import android.app.TimePickerDialog
 import android.widget.TextView
 import java.io.File
 import java.io.FileOutputStream

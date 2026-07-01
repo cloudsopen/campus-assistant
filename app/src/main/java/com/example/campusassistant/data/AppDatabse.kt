@@ -37,8 +37,8 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "campus_assistant_db"
                 )
-                .fallbackToDestructiveMigration() // 开发阶段直接摧毁重建，方便修改
-                .build()
+                    .fallbackToDestructiveMigration() // 开发阶段直接摧毁重建，方便修改
+                    .build()
                 INSTANCE = instance
                 instance
             }

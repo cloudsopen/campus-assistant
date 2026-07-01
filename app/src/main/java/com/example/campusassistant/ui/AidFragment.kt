@@ -12,15 +12,18 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.example.campusassistant.aid.AppDatabase
-import com.example.campusassistant.aid.PublishTaskActivity
-import com.example.campusassistant.aid.EditTaskActivity
 import com.example.campusassistant.R
+import com.example.campusassistant.aid.AppDatabase
+import com.example.campusassistant.aid.EditTaskActivity
+import com.example.campusassistant.aid.PublishTaskActivity
 import com.example.campusassistant.aid.Task
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 class AidFragment : Fragment() {
@@ -38,11 +41,22 @@ class AidFragment : Fragment() {
     private var tvTimeLimit: TextView? = null
     private var tvMoney: TextView? = null
     private var cardContent: View? = null
+    private var layoutEmpty: View? = null
 
     private val db by lazy { AppDatabase.getInstance(requireContext()) }
     private var currentTabIndex = 0
     private var allTaskList: List<Task> = emptyList()
     private var currentShowTask: Task? = null
+    // 控制数据库监听协程，切换Tab时取消旧监听
+    private var dataCollectJob: Job? = null
+    // 广播接收器
+    private val refreshReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == PublishTaskActivity.ACTION_REFRESH_TASK) {
+                loadTaskDataByTab(currentTabIndex)
+            }
+        }
+    }
 
     private companion object {
         const val TAB_EXPRESS = 0
@@ -50,15 +64,6 @@ class AidFragment : Fragment() {
         const val TAB_SHOP = 2
         const val COLOR_NORMAL = "#333333"
         const val COLOR_SELECT = "#00C853"
-    }
-
-    // 广播接收器：接收发布/修改/删除后刷新信号（BroadcastReceiver组件）
-    private val refreshReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent?.action == PublishTaskActivity.ACTION_REFRESH_TASK) {
-                loadTaskDataByTab(currentTabIndex)
-            }
-        }
     }
 
     override fun onCreateView(
@@ -69,10 +74,7 @@ class AidFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_aid, container, false)
         initView(root)
         initClick()
-        // 注册广播
-        val filter = IntentFilter(PublishTaskActivity.ACTION_REFRESH_TASK)
-        requireContext().registerReceiver(refreshReceiver, filter)
-        // 初始化加载快递分类数据
+        registerBroadcast()
         selectTab(TAB_EXPRESS)
         return root
     }
@@ -90,38 +92,35 @@ class AidFragment : Fragment() {
         tvTimeLimit = root.findViewById(R.id.tv_time_limit)
         tvMoney = root.findViewById(R.id.tv_money)
         cardContent = root.findViewById(R.id.card_content)
+
     }
 
     private fun initClick() {
-        // 英雄广场
         rlHeroPlaza?.setOnClickListener {
             startActivity(Intent(requireActivity(), HeroPlazaActivity::class.java))
         }
-        // 发布需求按钮（原校园认证按钮）
         rlAuth?.setOnClickListener {
             startActivity(Intent(requireActivity(), PublishTaskActivity::class.java))
         }
-        // Tab切换
         llExpress?.setOnClickListener { selectTab(TAB_EXPRESS) }
         llTakeout?.setOnClickListener { selectTab(TAB_TAKEOUT) }
         llShop?.setOnClickListener { selectTab(TAB_SHOP) }
-        // 点击需求卡片跳转编辑页面
         cardContent?.setOnClickListener {
             currentShowTask?.let { task ->
                 val intent = Intent(requireContext(), EditTaskActivity::class.java)
                 intent.putExtra("task_id", task.id)
                 startActivity(intent)
-            } ?: run {
-                Toast.makeText(requireContext(), "暂无需求可编辑", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     private fun selectTab(index: Int) {
         currentTabIndex = index
+        // 重置全部Tab文字颜色
         llExpress?.let { setTabTextColor(it, COLOR_NORMAL) }
         llTakeout?.let { setTabTextColor(it, COLOR_NORMAL) }
-        llShop?.let { setTabTextColor(it, COLOR_NORMAL) }
+        llShop?.let { setTabTextColor(it, COLOR_SELECT) }
+        // 选中Tab高亮
         when (index) {
             TAB_EXPRESS -> llExpress?.let { setTabTextColor(it, COLOR_SELECT) }
             TAB_TAKEOUT -> llTakeout?.let { setTabTextColor(it, COLOR_SELECT) }
@@ -130,48 +129,55 @@ class AidFragment : Fragment() {
         loadTaskDataByTab(index)
     }
 
-    // 根据Tab类型读取数据库数据
     private fun loadTaskDataByTab(tabIndex: Int) {
-        val typeStr = when(tabIndex) {
+        val typeStr = when (tabIndex) {
             TAB_EXPRESS -> "快递"
             TAB_TAKEOUT -> "外卖"
             TAB_SHOP -> "代买"
             else -> "快递"
         }
-        // 监听数据库数据流
-        lifecycleScope.launch {
+        // 取消上一次数据监听，避免多流并发
+        dataCollectJob?.cancel()
+        dataCollectJob = lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                db.taskDao().getTaskByType(typeStr).collect { list ->
-                    allTaskList = list
-                    if (list.isNotEmpty()) {
-                        val first = list.first()
-                        currentShowTask = first
-                        updateContent(
-                            tag = first.type,
-                            count = "共${list.size}条记录",
-                            title = first.title,
-                            location = first.location,
-                            time = first.timeLimit,
-                            money = first.money
-                        )
-                    } else {
-                        // 无数据时清空卡片
-                        tvRecordCount?.text = "共0条记录"
-                        tvTag?.text = ""
-                        tvTitle?.text = "暂无该类型需求，快去发布吧！"
-                        tvLocation?.text = ""
-                        tvTimeLimit?.text = ""
-                        tvMoney?.text = ""
-                        currentShowTask = null
+                db.taskDao().getTaskByType(typeStr)
+                    .distinctUntilChanged() // 仅数据变化才更新UI
+                    .collect { list ->
+                        allTaskList = list
+                        if (list.isNotEmpty()) {
+                            layoutEmpty?.visibility = View.GONE
+                            cardContent?.visibility = View.VISIBLE
+                            val first = list.first()
+                            currentShowTask = first
+                            updateContent(
+                                tag = first.type,
+                                count = "共${list.size}条记录",
+                                title = first.title,
+                                location = first.location,
+                                time = first.timeLimit,
+                                money = first.money
+                            )
+                        } else {
+                            layoutEmpty?.visibility = View.VISIBLE
+                            cardContent?.visibility = View.GONE
+                            tvRecordCount?.text = "共0条记录"
+                            currentShowTask = null
+                        }
                     }
-                }
             }
         }
     }
 
     private fun setTabTextColor(tabLayout: LinearLayout, colorHex: String) {
-        val text = tabLayout.getChildAt(1) as TextView
-        text.setTextColor(Color.parseColor(colorHex))
+        // 安全获取子View，避免强转崩溃
+        val childCount = tabLayout.childCount
+        for (i in 0 until childCount) {
+            val child = tabLayout.getChildAt(i)
+            if (child is TextView) {
+                child.setTextColor(Color.parseColor(colorHex))
+                break
+            }
+        }
     }
 
     private fun updateContent(
@@ -190,9 +196,40 @@ class AidFragment : Fragment() {
         tvMoney?.text = "报酬 $money"
     }
 
-    // 页面销毁注销广播，防止内存泄漏
+    // 单独封装广播注册，防止重复注册
+    private fun registerBroadcast() {
+        val filter = IntentFilter(PublishTaskActivity.ACTION_REFRESH_TASK)
+        ContextCompat.registerReceiver(
+            requireContext(),
+            refreshReceiver,
+            filter,
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
+    }
+
     override fun onDestroyView() {
+        // 取消数据监听协程
+        dataCollectJob?.cancel()
+        // 注销广播，防止内存泄漏
+        try {
+            requireContext().unregisterReceiver(refreshReceiver)
+        } catch (e: IllegalArgumentException) {
+            // 已注销则忽略异常
+        }
         super.onDestroyView()
-        requireContext().unregisterReceiver(refreshReceiver)
+        // 清空视图引用，避免内存泄漏
+        rlHeroPlaza = null
+        rlAuth = null
+        llExpress = null
+        llTakeout = null
+        llShop = null
+        tvRecordCount = null
+        tvTag = null
+        tvTitle = null
+        tvLocation = null
+        tvTimeLimit = null
+        tvMoney = null
+        cardContent = null
+        layoutEmpty = null
     }
 }
