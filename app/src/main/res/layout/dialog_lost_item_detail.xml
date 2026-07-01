@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#FFFFFF"
+    android:padding="20dp">
+
+    <!-- 顶部标题栏：标题 + 关闭按钮 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="物品详情"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#333333"/>
+
+        <TextView
+            android:id="@+id/tv_dialog_close"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:text="✕"
+            android:textSize="20sp"
+            android:textColor="#999999"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
+    </LinearLayout>
+
+    <!-- 图片展示区（水平滚动，展示全部图片） -->
+    <HorizontalScrollView
+        android:id="@+id/hsv_images"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginBottom="16dp"
+        android:scrollbars="none"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/layout_detail_images"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <!-- 物品分类标签 -->
+    <TextView
+        android:id="@+id/tv_detail_category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#2196F3"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:background="#E3F2FD"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="4dp"
+        android:layout_marginBottom="12dp"/>
+
+    <!-- 物品详细描述（完整展示不截断） -->
+    <TextView
+        android:id="@+id/tv_detail_description_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="📋 物品描述"
+        android:textColor="#999999"
+        android:textSize="13sp"
+        android:layout_marginBottom="4dp"/>
+
+    <TextView
+        android:id="@+id/tv_detail_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#333333"
+        android:textSize="16sp"
+        android:lineSpacingExtra="4dp"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- 分隔线 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#EEEEEE"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- 丢失地点 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📍"
+            android:textSize="16sp"
+            android:layout_marginEnd="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="丢失地点："
+            android:textColor="#999999"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/tv_detail_location"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="#333333"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <!-- 丢失时间 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="⏰"
+            android:textSize="16sp"
+            android:layout_marginEnd="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="丢失时间："
+            android:textColor="#999999"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/tv_detail_losttime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="#333333"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <!-- 联系方式 -->
+    <LinearLayout
+        android:id="@+id/layout_detail_contact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📞"
+            android:textSize="16sp"
+            android:layout_marginEnd="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="联系方式："
+            android:textColor="#999999"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/tv_detail_contact"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="#333333"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <!-- 发布者信息（如果有的话） -->
+    <LinearLayout
+        android:id="@+id/layout_detail_publisher"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="👤"
+            android:textSize="16sp"
+            android:layout_marginEnd="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="发布者："
+            android:textColor="#999999"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/tv_detail_publisher"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="#333333"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+</LinearLayout>

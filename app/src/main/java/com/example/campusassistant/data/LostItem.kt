@@ -14,7 +14,11 @@ data class LostItem(
 
     val category: String,
 
+    val lost_time:String,
+    
     val description: String,
+
+    val contact_information:String,
 
     val imagePaths: List<String>? = null
 )

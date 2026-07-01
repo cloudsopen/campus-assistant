@@ -33,5 +33,5 @@
         android:id="@+id/navigation_profile"
         android:name="com.example.campusassistant.ui.ProfileFragment"
         android:label="我的"
-        tools:layout="@layout/fragment_placeholder" />
+        tools:layout="@layout/fragment_profile" />
 </navigation>

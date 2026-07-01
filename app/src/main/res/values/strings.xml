@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Campus Assistant</string>
     <string name="title_activity_lostand_found">LostandFoundActivity</string>
+    <string-array name="task_type_arr">
+        <item>快递</item>
+        <item>外卖</item>
+        <item>代买</item>
+    </string-array>
 </resources>
