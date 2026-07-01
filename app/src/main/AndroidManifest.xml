@@ -39,6 +39,10 @@
             android:name=".ui.AuthActivity"
             android:exported="false"
             android:theme="@style/Theme.CampusAssistant" />
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CampusAssistant" />
         <activity android:name=".PublishIdleActivity" />
         <activity android:name=".PublishBuyActivity" />
         <activity android:name=".PublishCarpoolActivity" />

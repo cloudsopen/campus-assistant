@@ -15,9 +15,10 @@ import androidx.room.TypeConverters
         CarpoolInfo::class,
         ErrandTask::class,
         ForumPost::class,
-        ForumReply::class
+        ForumReply::class,
+        CampusMessage::class
     ],
-    version = 9, // 升级版本号：移除 User 中的 tag 字段
+    version = 10,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -31,6 +32,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun errandTaskDao(): ErrandTaskDao
     abstract fun forumPostDao(): ForumPostDao
     abstract fun forumReplyDao(): ForumReplyDao
+    abstract fun campusMessageDao(): CampusMessageDao
 
     companion object {
         @Volatile
@@ -43,7 +45,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "campus_assistant_db"
                 )
-                    .fallbackToDestructiveMigration() // 开发阶段直接摧毁重建，方便修改
+                    .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance

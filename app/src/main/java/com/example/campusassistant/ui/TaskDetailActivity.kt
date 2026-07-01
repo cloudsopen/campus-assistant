@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.campusassistant.R
 import com.example.campusassistant.data.AppDatabase
+import com.example.campusassistant.data.CampusMessage
 import com.example.campusassistant.data.ErrandTask
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,9 +35,9 @@ class TaskDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_publish_task)
-        
+
         taskId = intent.getLongExtra("task_id", -1)
-        
+
         initView()
         loadData()
         initClick()
@@ -57,7 +58,7 @@ class TaskDetailActivity : AppCompatActivity() {
 
     private fun loadData() {
         if (taskId == -1L) {
-            Toast.makeText(this, "错误：任务ID无效", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "错误：任务 ID 无效", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -65,27 +66,7 @@ class TaskDetailActivity : AppCompatActivity() {
         lifecycleScope.launch(Dispatchers.IO) {
             task = db.errandTaskDao().getTaskById(taskId)
             withContext(Dispatchers.Main) {
-                task?.let { t ->
-                    tvCategory.text = t.category
-                    tvTitle.text = t.title
-                    tvMoney.text = "¥${t.reward}"
-                    tvLocation.text = t.location ?: "暂无地点"
-                    tvTime.text = "截止：${t.deadline ?: "不限时"}"
-                    tvDesc.text = t.description
-                    tvPublisher.text = t.publisher ?: "匿名用户"
-                    
-                    tvStatus.text = when(t.status) {
-                        0 -> "待接单"
-                        1 -> "进行中"
-                        else -> "已完成"
-                    }
-                    
-                    if (t.status != 0) {
-                        btnAccept.isEnabled = false
-                        btnAccept.text = "已被接单"
-                        btnAccept.alpha = 0.5f
-                    }
-                } ?: run {
+                task?.let { bindTask(it) } ?: run {
                     Toast.makeText(this@TaskDetailActivity, "任务已不存在", Toast.LENGTH_SHORT).show()
                     finish()
                 }
@@ -93,18 +74,59 @@ class TaskDetailActivity : AppCompatActivity() {
         }
     }
 
+    private fun bindTask(t: ErrandTask) {
+        tvCategory.text = t.category
+        tvTitle.text = t.title
+        tvMoney.text = "¥${t.reward}"
+        tvLocation.text = t.location ?: "暂无地点"
+        tvTime.text = "截止：${t.deadline ?: "不限时"}"
+        tvDesc.text = t.description
+        tvPublisher.text = t.publisher ?: "匿名用户"
+        tvStatus.text = when (t.status) {
+            0 -> "待接单"
+            1 -> "进行中"
+            else -> "已完成"
+        }
+
+        btnAccept.isEnabled = t.status == 0
+        btnAccept.alpha = if (t.status == 0) 1f else 0.5f
+        btnAccept.text = if (t.status == 0) "接取任务" else "已被接单"
+    }
+
     private fun initClick() {
         btnBack.setOnClickListener { finish() }
-        
+
         btnAccept.setOnClickListener {
-            task?.let { t ->
-                lifecycleScope.launch(Dispatchers.IO) {
-                    val updatedTask = t.copy(status = 1, acceptor = "当前用户") // 模拟当前用户
-                    db.errandTaskDao().updateTask(updatedTask)
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(this@TaskDetailActivity, "接单成功！请尽快完成", Toast.LENGTH_LONG).show()
-                        loadData() // 刷新页面状态
-                    }
+            val currentTask = task ?: return@setOnClickListener
+            val currentUserId = UserSessionManager.getUserId(this)
+            if (!UserSessionManager.isLoggedIn(this) || currentUserId <= 0L) {
+                Toast.makeText(this, "请先登录后再接取任务", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (currentUserId == currentTask.userId) {
+                Toast.makeText(this, "不能接取自己发布的任务", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val acceptorName = UserSessionManager.getDisplayName(this)
+            lifecycleScope.launch(Dispatchers.IO) {
+                val updatedTask = currentTask.copy(status = 1, acceptor = acceptorName)
+                db.errandTaskDao().updateTask(updatedTask)
+                if (currentTask.userId > 0L) {
+                    db.campusMessageDao().insertMessage(
+                        CampusMessage(
+                            ownerUserId = currentTask.userId,
+                            type = "task_accept",
+                            title = "你发布的帖子被接取",
+                            content = "$acceptorName 接取了你发布的「${currentTask.title}」，请及时查看并联系对方。",
+                            relatedTitle = currentTask.title,
+                            actorName = acceptorName
+                        )
+                    )
+                }
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@TaskDetailActivity, "接单成功，已通知发布者", Toast.LENGTH_LONG).show()
+                    loadData()
                 }
             }
         }

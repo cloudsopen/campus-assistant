@@ -13,6 +13,7 @@ import com.example.campusassistant.PublishCarpoolActivity
 import com.example.campusassistant.PublishErrandActivity
 import com.example.campusassistant.PublishIdleActivity
 import com.example.campusassistant.R
+import com.example.campusassistant.SettingsActivity
 
 class ProfileFragment : Fragment() {
     private var rootView: View? = null
@@ -46,7 +47,9 @@ class ProfileFragment : Fragment() {
         view.findViewById<View>(R.id.profile_orders_card).setOnClickListener {
             showToast("订单功能后续接入")
         }
-        view.findViewById<View>(R.id.profile_action_settings).setOnClickListener(authClick)
+        view.findViewById<View>(R.id.profile_action_settings).setOnClickListener {
+            startActivity(Intent(requireContext(), SettingsActivity::class.java))
+        }
         view.findViewById<TextView>(R.id.logout_button).setOnClickListener {
             if (UserSessionManager.isLoggedIn(requireContext())) {
                 UserSessionManager.logout(requireContext())

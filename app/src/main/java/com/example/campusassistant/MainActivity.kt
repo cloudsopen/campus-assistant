@@ -1,25 +1,33 @@
 package com.example.campusassistant
 
-import android.content.Intent
 import android.os.Bundle
-import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.example.campusassistant.data.AppDatabase
+import com.example.campusassistant.ui.UserSessionManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import android.widget.Toast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var navView: BottomNavigationView
+    private val db by lazy { AppDatabase.getDatabase(this) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        val navView: BottomNavigationView = findViewById(R.id.bottom_navigation)
+        navView = findViewById(R.id.bottom_navigation)
+        val fab: FloatingActionButton = findViewById(R.id.fab_add)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, 0, systemBars.right, 0)
@@ -27,57 +35,68 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-
-
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
         navView.setupWithNavController(navController)
 
-        // 获取大橙色按钮的引用
-        val fab: FloatingActionButton = findViewById(R.id.fab_add)
         fab.setOnClickListener {
-            // 关键点 1：必须使用 navController 跳转，不要用 FragmentTransaction
-            // 关键点 2：跳转的 ID (navigation_publish) 必须在 nav_graph.xml 中有对应定义的 fragment
             navController.navigate(R.id.navigation_publish)
         }
 
-        // 关键点 3：添加监听，解决“点不回来”的问题
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.navigation_publish) {
-                // 当跳转到“发布中心”时，强制让底部导航栏“取消选中”当前的任何项
                 navView.menu.setGroupCheckable(0, true, false)
                 for (i in 0 until navView.menu.size()) {
-                    val item = navView.menu.getItem(i)
-                    item.isChecked = false
+                    navView.menu.getItem(i).isChecked = false
                 }
             } else {
-                // 回到其他主标签页时，恢复正常的选中效果
                 navView.menu.setGroupCheckable(0, true, true)
             }
+            refreshUnreadMessageBadge()
         }
 
-        // 1. 设置点击监听（处理从未选中到选中的情况）
         navView.setOnItemSelectedListener { item ->
-            // 强制跳转，不论当前在哪
-            navController.navigate(item.itemId)
+            if (item.itemId != R.id.navigation_placeholder) {
+                navController.navigate(item.itemId)
+            }
             true
         }
 
-        // 2. 设置重新选中监听（处理“点不动”的核心：已经选中了还要点的情况）
         navView.setOnItemReselectedListener { item ->
-            // 如果当前在发布页，哪怕图标是选中的，点击也要强制跳回去
-            if (navController.currentDestination?.id == R.id.navigation_publish) {
+            if (
+                item.itemId != R.id.navigation_placeholder &&
+                navController.currentDestination?.id == R.id.navigation_publish
+            ) {
                 navController.navigate(item.itemId)
             }
         }
+    }
 
-        // 3. 优化大按钮点击
-        fab.setOnClickListener {
-            // 使用带配置的跳转，确保不会重复堆叠页面
-            navController.navigate(R.id.navigation_publish)
+    override fun onResume() {
+        super.onResume()
+        refreshUnreadMessageBadge()
+    }
+
+    fun refreshUnreadMessageBadge() {
+        val ownerUserId = UserSessionManager.getUserId(this)
+        if (!UserSessionManager.isLoggedIn(this) || ownerUserId <= 0L) {
+            navView.removeBadge(R.id.navigation_messages)
+            return
         }
 
-
+        lifecycleScope.launch(Dispatchers.IO) {
+            val unreadCount = db.campusMessageDao().countUnread(ownerUserId)
+            withContext(Dispatchers.Main) {
+                if (unreadCount > 0) {
+                    navView.getOrCreateBadge(R.id.navigation_messages).apply {
+                        isVisible = true
+                        number = unreadCount
+                    }
+                } else {
+                    navView.removeBadge(R.id.navigation_messages)
+                }
+            }
+        }
     }
 }
