@@ -14,36 +14,49 @@ import com.example.campusassistant.PublishErrandActivity
 import com.example.campusassistant.PublishLostActivity
 
 class PublishFragment : Fragment() {
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_publish, container, false)
 
+    // 第一步：onCreateView 只负责“把布局画出来”
+    override fun onCreateView(
+        inflater: LayoutInflater, 
+        container: ViewGroup?, 
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_publish, container, false)
+    }
+
+    // 第二步：onViewCreated 负责“处理界面逻辑”
+    // 此时 View 已经完全创建好了，在这里设置点击事件更安全、更专业
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        
+        // 初始化所有的点击跳转逻辑
+        initClickListeners(view)
+    }
+
+    private fun initClickListeners(view: View) {
         // 1. 闲置跳转
         view.findViewById<View>(R.id.layout_publish_idle).setOnClickListener {
-            val intent = Intent(requireContext(), PublishIdleActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(requireContext(), PublishIdleActivity::class.java))
         }
 
         // 2. 求购跳转
         view.findViewById<View>(R.id.layout_publish_buy).setOnClickListener {
-            val intent = Intent(requireContext(), PublishBuyActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(requireContext(), PublishBuyActivity::class.java))
         }
 
+        // 3. 拼车跳转
         view.findViewById<View>(R.id.layout_publish_carpool).setOnClickListener {
-            val intent = Intent(requireContext(), PublishCarpoolActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(requireContext(), PublishCarpoolActivity::class.java))
         }
 
+        // 4. 跑腿跳转
         view.findViewById<View>(R.id.layout_publish_errand).setOnClickListener {
-            val intent = Intent(requireContext(), PublishErrandActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(requireContext(), PublishErrandActivity::class.java))
         }
 
+        // 5. 寻物跳转
         view.findViewById<View>(R.id.layout_publish_lost).setOnClickListener {
-            val intent = Intent(requireContext(), PublishLostActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(requireContext(), PublishLostActivity::class.java))
         }
-
-        return view
     }
 }

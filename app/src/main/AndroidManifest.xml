@@ -34,8 +34,7 @@
         <activity
             android:name=".LostandFoundAddActivity"
             android:exported="false" />
-        <activity android:name=".aid.PublishTaskActivity" android:exported="false"/>
-        <activity android:name=".aid.EditTaskActivity" android:exported="false"/>
+        <activity android:name=".ui.TaskDetailActivity" android:exported="false"/>
         <activity
             android:name=".ui.AuthActivity"
             android:exported="false"

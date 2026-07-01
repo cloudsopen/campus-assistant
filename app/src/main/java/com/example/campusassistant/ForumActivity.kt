@@ -19,7 +19,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.campusassistant.data.AppDatabase
 import com.example.campusassistant.data.ForumPost
+import com.example.campusassistant.data.ForumPostDao
 import com.example.campusassistant.data.ForumReply
+import com.example.campusassistant.data.ForumReplyDao
 import com.example.campusassistant.ui.theme.CampusAssistantTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -67,8 +69,8 @@ private fun formatTime(timestamp: Long): String {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ForumScreen(
-    forumDao: com.example.campusassistant.data.ForumPostDao,
-    replyDao: com.example.campusassistant.data.ForumReplyDao,
+    forumDao: ForumPostDao,
+    replyDao: ForumReplyDao,
     onShowToast: (String) -> Unit
 ) {
     // selectedPostId == null → 帖子列表页；!= null → 帖子详情页
@@ -96,7 +98,7 @@ fun ForumScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostListScreen(
-    forumDao: com.example.campusassistant.data.ForumPostDao,
+    forumDao: ForumPostDao,
     onPostClick: (Long) -> Unit,
     onShowToast: (String) -> Unit
 ) {
@@ -244,8 +246,8 @@ fun PostCard(post: ForumPost, onClick: () -> Unit = {}) {
 @Composable
 fun PostDetailScreen(
     postId: Long,
-    forumDao: com.example.campusassistant.data.ForumPostDao,
-    replyDao: com.example.campusassistant.data.ForumReplyDao,
+    forumDao: ForumPostDao,
+    replyDao: ForumReplyDao,
     onBack: () -> Unit,
     onShowToast: (String) -> Unit
 ) {

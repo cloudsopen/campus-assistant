@@ -16,7 +16,7 @@ import androidx.room.TypeConverters
         ForumPost::class,
         ForumReply::class
     ],
-    version = 4, // 升级版本号（加入评论回复表）
+    version = 5, // 升级版本号：更新 ErrandTask 结构
     exportSchema = false
 )
 @TypeConverters(Converters::class)

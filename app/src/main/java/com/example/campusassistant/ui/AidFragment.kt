@@ -1,70 +1,42 @@
 package com.example.campusassistant.ui
 
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.campusassistant.R
-import com.example.campusassistant.aid.AppDatabase
-import com.example.campusassistant.aid.EditTaskActivity
-import com.example.campusassistant.aid.PublishTaskActivity
-import com.example.campusassistant.aid.Task
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.distinctUntilChanged
+import com.example.campusassistant.data.AppDatabase
+import com.example.campusassistant.data.ErrandTask
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AidFragment : Fragment() {
-    private var rlHeroPlaza: View? = null
-    private var rlAuth: View? = null
 
-    private var llExpress: LinearLayout? = null
-    private var llTakeout: LinearLayout? = null
-    private var llShop: LinearLayout? = null
+    private lateinit var rvTasks: RecyclerView
+    private lateinit var layoutEmpty: View
+    private lateinit var tvRecordCount: TextView
+    
+    // Categories
+    private lateinit var catAll: LinearLayout
+    private lateinit var catExpress: LinearLayout
+    private lateinit var catTakeout: LinearLayout
+    private lateinit var catShop: LinearLayout
+    private lateinit var catErrand: LinearLayout
 
-    private var tvRecordCount: TextView? = null
-    private var tvTag: TextView? = null
-    private var tvTitle: TextView? = null
-    private var tvLocation: TextView? = null
-    private var tvTimeLimit: TextView? = null
-    private var tvMoney: TextView? = null
-    private var cardContent: View? = null
-    private var layoutEmpty: View? = null
-
-    private val db by lazy { AppDatabase.getInstance(requireContext()) }
-    private var currentTabIndex = 0
-    private var allTaskList: List<Task> = emptyList()
-    private var currentShowTask: Task? = null
-    // 控制数据库监听协程，切换Tab时取消旧监听
-    private var dataCollectJob: Job? = null
-    // 广播接收器
-    private val refreshReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent?.action == PublishTaskActivity.ACTION_REFRESH_TASK) {
-                loadTaskDataByTab(currentTabIndex)
-            }
-        }
-    }
-
-    private companion object {
-        const val TAB_EXPRESS = 0
-        const val TAB_TAKEOUT = 1
-        const val TAB_SHOP = 2
-        const val COLOR_NORMAL = "#333333"
-        const val COLOR_SELECT = "#00C853"
-    }
+    private var adapter: ErrandTaskAdapter? = null
+    private var currentCategory = "全部"
+    
+    private val db by lazy { AppDatabase.getDatabase(requireContext()) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -73,163 +45,106 @@ class AidFragment : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_aid, container, false)
         initView(root)
-        initClick()
-        registerBroadcast()
-        selectTab(TAB_EXPRESS)
+        setupRecyclerView()
+        initClick(root)
+        refreshData()
         return root
     }
 
     private fun initView(root: View) {
-        rlHeroPlaza = root.findViewById(R.id.rl_hero_plaza)
-        rlAuth = root.findViewById(R.id.rl_auth)
-        llExpress = root.findViewById(R.id.ll_express)
-        llTakeout = root.findViewById(R.id.ll_takeout)
-        llShop = root.findViewById(R.id.ll_shop)
+        rvTasks = root.findViewById(R.id.rv_tasks)
+        layoutEmpty = root.findViewById(R.id.layout_empty)
         tvRecordCount = root.findViewById(R.id.tv_record_count)
-        tvTag = root.findViewById(R.id.tv_tag)
-        tvTitle = root.findViewById(R.id.tv_title)
-        tvLocation = root.findViewById(R.id.tv_location)
-        tvTimeLimit = root.findViewById(R.id.tv_time_limit)
-        tvMoney = root.findViewById(R.id.tv_money)
-        cardContent = root.findViewById(R.id.card_content)
-
+        
+        catAll = root.findViewById(R.id.cat_all)
+        catExpress = root.findViewById(R.id.cat_express)
+        catTakeout = root.findViewById(R.id.cat_takeout)
+        catShop = root.findViewById(R.id.cat_shop)
+        catErrand = root.findViewById(R.id.cat_errand)
     }
 
-    private fun initClick() {
-        rlHeroPlaza?.setOnClickListener {
-            startActivity(Intent(requireActivity(), HeroPlazaActivity::class.java))
+    private fun setupRecyclerView() {
+        rvTasks.layoutManager = LinearLayoutManager(requireContext())
+        adapter = ErrandTaskAdapter(emptyList()) { task ->
+            val intent = Intent(requireContext(), TaskDetailActivity::class.java)
+            intent.putExtra("task_id", task.id)
+            startActivity(intent)
         }
-        rlAuth?.setOnClickListener {
-            startActivity(Intent(requireActivity(), PublishTaskActivity::class.java))
+        rvTasks.adapter = adapter
+    }
+
+    private fun initClick(root: View) {
+        root.findViewById<View>(R.id.rl_hero_plaza).setOnClickListener {
+            startActivity(Intent(requireContext(), HeroPlazaActivity::class.java))
         }
-        llExpress?.setOnClickListener { selectTab(TAB_EXPRESS) }
-        llTakeout?.setOnClickListener { selectTab(TAB_TAKEOUT) }
-        llShop?.setOnClickListener { selectTab(TAB_SHOP) }
-        cardContent?.setOnClickListener {
-            currentShowTask?.let { task ->
-                val intent = Intent(requireContext(), EditTaskActivity::class.java)
-                intent.putExtra("task_id", task.id)
-                startActivity(intent)
+
+        catAll.setOnClickListener { switchTab("全部") }
+        catExpress.setOnClickListener { switchTab("代取快递") }
+        catTakeout.setOnClickListener { switchTab("外卖代取") }
+        catShop.setOnClickListener { switchTab("代买代送") }
+        catErrand.setOnClickListener { switchTab("代办事项") }
+    }
+
+    private fun switchTab(category: String) {
+        if (currentCategory == category) return
+        currentCategory = category
+        
+        updateCategoryUI()
+        refreshData()
+    }
+
+    private fun updateCategoryUI() {
+        val categories = listOf(catAll, catExpress, catTakeout, catShop, catErrand)
+        val names = listOf("全部", "代取快递", "外卖代取", "代买代送", "代办事项")
+        val activeColor = Color.parseColor("#00C853")
+        val inactiveColor = Color.parseColor("#666666")
+        val activeBg = Color.parseColor("#00C853")
+        val inactiveBg = Color.parseColor("#EEEEEE")
+
+        for (i in categories.indices) {
+            val layout = categories[i]
+            val icon = layout.getChildAt(0) as ImageView
+            val text = layout.getChildAt(1) as TextView
+            
+            if (names[i] == currentCategory) {
+                text.setTextColor(activeColor)
+                text.paint.isFakeBoldText = true
+                icon.backgroundTintList = android.content.res.ColorStateList.valueOf(activeBg)
+                icon.setColorFilter(Color.WHITE)
+            } else {
+                text.setTextColor(inactiveColor)
+                text.paint.isFakeBoldText = false
+                icon.backgroundTintList = null
+                icon.setBackgroundResource(0) // Clear background
+                icon.setColorFilter(Color.parseColor("#999999"))
             }
         }
     }
 
-    private fun selectTab(index: Int) {
-        currentTabIndex = index
-        // 重置全部Tab文字颜色
-        llExpress?.let { setTabTextColor(it, COLOR_NORMAL) }
-        llTakeout?.let { setTabTextColor(it, COLOR_NORMAL) }
-        llShop?.let { setTabTextColor(it, COLOR_SELECT) }
-        // 选中Tab高亮
-        when (index) {
-            TAB_EXPRESS -> llExpress?.let { setTabTextColor(it, COLOR_SELECT) }
-            TAB_TAKEOUT -> llTakeout?.let { setTabTextColor(it, COLOR_SELECT) }
-            TAB_SHOP -> llShop?.let { setTabTextColor(it, COLOR_SELECT) }
-        }
-        loadTaskDataByTab(index)
-    }
-
-    private fun loadTaskDataByTab(tabIndex: Int) {
-        val typeStr = when (tabIndex) {
-            TAB_EXPRESS -> "快递"
-            TAB_TAKEOUT -> "外卖"
-            TAB_SHOP -> "代买"
-            else -> "快递"
-        }
-        // 取消上一次数据监听，避免多流并发
-        dataCollectJob?.cancel()
-        dataCollectJob = lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                db.taskDao().getTaskByType(typeStr)
-                    .distinctUntilChanged() // 仅数据变化才更新UI
-                    .collect { list ->
-                        allTaskList = list
-                        if (list.isNotEmpty()) {
-                            layoutEmpty?.visibility = View.GONE
-                            cardContent?.visibility = View.VISIBLE
-                            val first = list.first()
-                            currentShowTask = first
-                            updateContent(
-                                tag = first.type,
-                                count = "共${list.size}条记录",
-                                title = first.title,
-                                location = first.location,
-                                time = first.timeLimit,
-                                money = first.money
-                            )
-                        } else {
-                            layoutEmpty?.visibility = View.VISIBLE
-                            cardContent?.visibility = View.GONE
-                            tvRecordCount?.text = "共0条记录"
-                            currentShowTask = null
-                        }
-                    }
+    private fun refreshData() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val tasks = if (currentCategory == "全部") {
+                db.errandTaskDao().getTasksByStatus(0) // Only pending tasks
+            } else {
+                db.errandTaskDao().getPendingTasksByCategory(currentCategory)
+            }
+            
+            withContext(Dispatchers.Main) {
+                tvRecordCount.text = "${tasks.size} 条记录"
+                if (tasks.isEmpty()) {
+                    layoutEmpty.visibility = View.VISIBLE
+                    rvTasks.visibility = View.GONE
+                } else {
+                    layoutEmpty.visibility = View.GONE
+                    rvTasks.visibility = View.VISIBLE
+                    adapter?.updateData(tasks)
+                }
             }
         }
     }
 
-    private fun setTabTextColor(tabLayout: LinearLayout, colorHex: String) {
-        // 安全获取子View，避免强转崩溃
-        val childCount = tabLayout.childCount
-        for (i in 0 until childCount) {
-            val child = tabLayout.getChildAt(i)
-            if (child is TextView) {
-                child.setTextColor(Color.parseColor(colorHex))
-                break
-            }
-        }
-    }
-
-    private fun updateContent(
-        tag: String,
-        count: String,
-        title: String,
-        location: String,
-        time: String,
-        money: String
-    ) {
-        tvRecordCount?.text = count
-        tvTag?.text = tag
-        tvTitle?.text = title
-        tvLocation?.text = location
-        tvTimeLimit?.text = time
-        tvMoney?.text = "报酬 $money"
-    }
-
-    // 单独封装广播注册，防止重复注册
-    private fun registerBroadcast() {
-        val filter = IntentFilter(PublishTaskActivity.ACTION_REFRESH_TASK)
-        ContextCompat.registerReceiver(
-            requireContext(),
-            refreshReceiver,
-            filter,
-            ContextCompat.RECEIVER_NOT_EXPORTED
-        )
-    }
-
-    override fun onDestroyView() {
-        // 取消数据监听协程
-        dataCollectJob?.cancel()
-        // 注销广播，防止内存泄漏
-        try {
-            requireContext().unregisterReceiver(refreshReceiver)
-        } catch (e: IllegalArgumentException) {
-            // 已注销则忽略异常
-        }
-        super.onDestroyView()
-        // 清空视图引用，避免内存泄漏
-        rlHeroPlaza = null
-        rlAuth = null
-        llExpress = null
-        llTakeout = null
-        llShop = null
-        tvRecordCount = null
-        tvTag = null
-        tvTitle = null
-        tvLocation = null
-        tvTimeLimit = null
-        tvMoney = null
-        cardContent = null
-        layoutEmpty = null
+    override fun onResume() {
+        super.onResume()
+        refreshData()
     }
 }
