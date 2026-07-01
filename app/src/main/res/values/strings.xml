@@ -6,4 +6,5 @@
         <item>外卖</item>
         <item>代买</item>
     </string-array>
+    <string name="title_activity_forum">ForumActivity</string>
 </resources>

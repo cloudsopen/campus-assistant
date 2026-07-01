@@ -28,10 +28,29 @@
             android:theme="@style/Theme.CampusAssistant"
             android:windowSoftInputMode="adjustResize" />
         <activity
+            android:name=".IdleHallActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CampusAssistant" />
+        <activity
             android:name=".LostandFoundAddActivity"
             android:exported="false" />
         <activity android:name=".aid.PublishTaskActivity" android:exported="false"/>
         <activity android:name=".aid.EditTaskActivity" android:exported="false"/>
+        <activity
+            android:name=".ui.AuthActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CampusAssistant" />
+        <activity android:name=".PublishIdleActivity" />
+        <activity android:name=".PublishBuyActivity" />
+        <activity android:name=".PublishCarpoolActivity" />
+        <activity android:name=".PublishErrandActivity" />
+        <activity android:name=".PublishLostActivity" />
+        <activity
+            android:name=".ForumActivity"
+            android:exported="false"
+            android:label="@string/title_activity_forum"
+            android:theme="@style/Theme.CampusAssistant"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>
