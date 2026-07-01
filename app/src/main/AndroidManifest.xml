@@ -30,6 +30,11 @@
         <activity
             android:name=".LostandFoundAddActivity"
             android:exported="false" />
+        <activity android:name=".PublishIdleActivity" />
+        <activity android:name=".PublishBuyActivity" />
+        <activity android:name=".PublishCarpoolActivity" />
+        <activity android:name=".PublishErrandActivity" />
+        <activity android:name=".PublishLostActivity" />
     </application>
 
 </manifest>

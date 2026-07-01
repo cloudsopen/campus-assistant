@@ -150,8 +150,9 @@
                 android:layout_marginTop="16dp"
                 android:columnCount="5">
 
-                <!-- Publish 1: Idle -->
+                <!-- Publish 1: 闲置物品 -->
                 <LinearLayout
+                    android:id="@+id/layout_publish_idle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
@@ -168,8 +169,9 @@
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="闲置" android:textColor="#333333" android:textSize="12sp" />
                 </LinearLayout>
 
-                <!-- Publish 2: Buy -->
+                <!-- Publish 2: 求购 -->
                 <LinearLayout
+                    android:id="@+id/layout_publish_buy"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
@@ -186,8 +188,9 @@
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="求购" android:textColor="#333333" android:textSize="12sp" />
                 </LinearLayout>
 
-                <!-- Publish 3: Carpool -->
+                <!-- Publish 3: 拼车 -->
                 <LinearLayout
+                    android:id="@+id/layout_publish_carpool"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
@@ -204,8 +207,9 @@
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="拼车" android:textColor="#333333" android:textSize="12sp" />
                 </LinearLayout>
 
-                <!-- Publish 4: Errand -->
+                <!-- Publish 4: 跑腿 -->
                 <LinearLayout
+                    android:id="@+id/layout_publish_errand"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
@@ -222,8 +226,9 @@
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="跑腿" android:textColor="#333333" android:textSize="12sp" />
                 </LinearLayout>
 
-                <!-- Publish 5: Lost -->
+                <!-- Publish 5: 丢失 -->
                 <LinearLayout
+                    android:id="@+id/layout_publish_lost"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
