@@ -10,6 +10,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import android.widget.Toast
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,5 +33,14 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
         navView.setupWithNavController(navController)
+
+        // 获取大橙色按钮的引用
+        val fab: FloatingActionButton = findViewById(R.id.fab_add)
+        // 设置点击事件
+        fab.setOnClickListener {
+            // 以后你可以在这里跳转到专门的发布页面
+            navController.navigate(R.id.navigation_publish)
+        }
+
     }
 }
