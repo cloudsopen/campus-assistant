@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.campusassistant.data.AppDatabase
 import com.example.campusassistant.data.ErrandTask
+import com.example.campusassistant.ui.AuthActivity
+import com.example.campusassistant.ui.UserSessionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -19,6 +21,15 @@ class PublishErrandActivity : AppCompatActivity() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // 登录检查
+        if (!UserSessionManager.isLoggedIn(this)) {
+            Toast.makeText(this, "请先登录", Toast.LENGTH_SHORT).show()
+            startActivity(android.content.Intent(this, AuthActivity::class.java))
+            finish()
+            return
+        }
+
         setContentView(R.layout.activity_publish_errand)
 
         findViewById<ImageButton>(R.id.btn_back).setOnClickListener {

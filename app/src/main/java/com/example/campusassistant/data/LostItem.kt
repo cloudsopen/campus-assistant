@@ -24,5 +24,7 @@ data class LostItem(
 
     val contact_information:String,
 
-    val imagePaths: List<String>? = null
+    val imagePaths: List<String>? = null,
+
+    val publishTime: Long = System.currentTimeMillis()
 )

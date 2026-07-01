@@ -14,8 +14,9 @@ data class ErrandTask(
     val reward: Double,
     val deadline: String? = null,   // 截止时间（字符串形式方便显示）
     val category: String = "快递",   // 分类：快递/外卖/代买/其他
-    val status: Int = 0,            // 0: 待接单, 1: 已接单, 2: 已完成
+    val status: Int = 0,            // 0: 待接单, 1: 待完成 (已接单), 2: 已完成 (已审核)
     val publisher: String? = "匿名用户",
-    val acceptor: String? = null,   // 接单人
+    val acceptor: String? = null,   // 接单人名称
+    val acceptorId: Long? = null,   // 接单人ID
     val publishTime: Long = System.currentTimeMillis()
 )

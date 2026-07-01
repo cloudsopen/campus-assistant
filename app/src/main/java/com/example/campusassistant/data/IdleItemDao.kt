@@ -26,4 +26,10 @@ interface IdleItemDao {
 
     @Query("SELECT * FROM idle_items WHERE category = :categoryName ORDER BY id DESC")
     fun getItemsByCategory(categoryName: String): List<IdleItem>
+
+    @Query("SELECT COUNT(*) FROM idle_items")
+    suspend fun getCount(): Int
+
+    @Query("SELECT * FROM idle_items WHERE userId = :userId ORDER BY id DESC")
+    suspend fun getItemsByUserId(userId: Long): List<IdleItem>
 }

@@ -23,4 +23,10 @@ interface BuyRequestDao {
 
     @Query("SELECT * FROM buy_requests WHERE id = :requestId")
     fun getRequestById(requestId: Long): BuyRequest?
+
+    @Query("SELECT COUNT(*) FROM buy_requests")
+    suspend fun getCount(): Int
+
+    @Query("SELECT * FROM buy_requests WHERE userId = :userId ORDER BY id DESC")
+    suspend fun getRequestsByUserId(userId: Long): List<BuyRequest>
 }

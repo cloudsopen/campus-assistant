@@ -27,4 +27,10 @@ interface ErrandTaskDao {
 
     @androidx.room.Delete
     fun deleteTask(task: ErrandTask)
+
+    @Query("SELECT COUNT(*) FROM errand_tasks")
+    suspend fun getCount(): Int
+
+    @Query("SELECT * FROM errand_tasks WHERE userId = :userId ORDER BY id DESC")
+    suspend fun getTasksByUserId(userId: Long): List<ErrandTask>
 }

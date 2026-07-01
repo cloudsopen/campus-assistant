@@ -59,6 +59,12 @@ dependencies {
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
+    // Retrofit 核心库
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    // Gson 转换器（能自动把网络返回的 JSON 文本变成 Kotlin 对象）
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    // Kotlin 协程（用于在后台线程安全地请求网络，防止界面卡死）
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
 }
 
 

@@ -23,4 +23,10 @@ interface CarpoolInfoDao {
 
     @Query("SELECT * FROM carpool_infos WHERE id = :infoId")
     fun getInfoById(infoId: Long): CarpoolInfo?
+
+    @Query("SELECT COUNT(*) FROM carpool_infos")
+    suspend fun getCount(): Int
+
+    @Query("SELECT * FROM carpool_infos WHERE userId = :userId ORDER BY id DESC")
+    suspend fun getInfoByUserId(userId: Long): List<CarpoolInfo>
 }

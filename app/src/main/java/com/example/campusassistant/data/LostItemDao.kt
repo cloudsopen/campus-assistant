@@ -27,4 +27,10 @@ interface LostItemDao {
 
     @Query("SELECT * FROM lost_items WHERE category = :categoryName ORDER BY id DESC")
     fun getItemsByCategory(categoryName: String): List<LostItem>
+
+    @Query("SELECT COUNT(*) FROM lost_items")
+    suspend fun getCount(): Int
+
+    @Query("SELECT * FROM lost_items WHERE userId = :userId ORDER BY id DESC")
+    suspend fun getItemsByUserId(userId: Long): List<LostItem>
 }
