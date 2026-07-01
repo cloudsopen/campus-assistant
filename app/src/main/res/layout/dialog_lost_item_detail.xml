@@ -158,6 +158,38 @@
             android:textStyle="bold"/>
     </LinearLayout>
 
+    <!-- 联系方式 -->
+    <LinearLayout
+        android:id="@+id/layout_detail_contact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📞"
+            android:textSize="16sp"
+            android:layout_marginEnd="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="联系方式："
+            android:textColor="#999999"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/tv_detail_contact"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="#333333"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
     <!-- 发布者信息（如果有的话） -->
     <LinearLayout
         android:id="@+id/layout_detail_publisher"

@@ -115,6 +115,7 @@ class LostandFoundActivity : AppCompatActivity() {
             val tvDescription: TextView = view.findViewById(R.id.tv_detail_description)
             val tvLocation: TextView = view.findViewById(R.id.tv_detail_location)
             val tvLosttime: TextView = view.findViewById(R.id.tv_detail_losttime)
+            val tvContact: TextView = view.findViewById(R.id.tv_detail_contact)
             val layoutPublisher: LinearLayout = view.findViewById(R.id.layout_detail_publisher)
             val tvPublisher: TextView = view.findViewById(R.id.tv_detail_publisher)
 
@@ -152,7 +153,8 @@ class LostandFoundActivity : AppCompatActivity() {
             tvCategory.text = item.category
             tvDescription.text = item.description
             tvLocation.text = item.location
-            tvLosttime.text = item.losttime
+            tvLosttime.text = item.lost_time
+            tvContact.text = item.contact_information
 
             // 发布者信息（如果有）
             if (!item.publisher.isNullOrBlank()) {

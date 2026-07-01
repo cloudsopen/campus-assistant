@@ -38,6 +38,14 @@
         android:layout_marginBottom="16dp"/>
 
     <EditText
+        android:id="@+id/et_contact_information"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="请输入联系方式（如电话，微信，QQ）"
+        android:maxLength="20"
+        android:layout_marginBottom="16dp"/>
+
+    <EditText
         android:id="@+id/et_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

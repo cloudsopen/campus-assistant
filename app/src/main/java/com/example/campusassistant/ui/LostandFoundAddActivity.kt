@@ -63,10 +63,8 @@ class LostandFoundAddActivity : AppCompatActivity() {
         val calendar = java.util.Calendar.getInstance()
         android.app.TimePickerDialog(this, android.R.style.Theme_Holo_Light_Dialog, { _, hourOfDay, minute ->
 
-            // 🎉 用户选完全部时间了！在这里把结果组装成 String
             val timeResult = "${month}月${day}日 ${hourOfDay}:${String.format("%02d", minute)}"
 
-            // 🌟 核心：给全局变量赋值，这样 btnSubmit 就能拿到了！
             selectedTimeStr = timeResult
 
             // 同时给前台 TextView 赋值，让用户能看见自己选的时间
@@ -82,6 +80,7 @@ class LostandFoundAddActivity : AppCompatActivity() {
         val spinnerCategory: Spinner = findViewById(R.id.spinner_category)
         val etLocation: EditText = findViewById(R.id.et_location)
         val etDescription: EditText = findViewById(R.id.et_description)
+        val etContact_Information: EditText = findViewById(R.id.et_contact_information)
         val btnSelectTime: Button = findViewById(R.id.btn_select_time)
         val tvSelectedTime: TextView = findViewById(R.id.tv_selected_time)
         val btnSelectImage: Button = findViewById(R.id.btn_select_image)
@@ -143,6 +142,7 @@ class LostandFoundAddActivity : AppCompatActivity() {
             val category = spinnerCategory.selectedItem.toString()
             val location = etLocation.text.toString().trim()
             val description = etDescription.text.toString().trim()
+            val contact_information = etContact_Information.text.toString().trim()
             val losttime = selectedTimeStr
             if (location.isEmpty() || description.isEmpty() || losttime.isEmpty()) {
                 Toast.makeText(this, "请把信息（包括时间）填写完整哦！", Toast.LENGTH_SHORT).show()
@@ -156,7 +156,8 @@ class LostandFoundAddActivity : AppCompatActivity() {
                 location = finalLocation,
                 category = category,
                 description = description,
-                losttime = losttime,
+                lost_time = losttime,
+                contact_information = contact_information,
                 imagePaths = if (selectedImagePaths.isEmpty()) null else selectedImagePaths.toList()
             )
 

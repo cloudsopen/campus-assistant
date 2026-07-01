@@ -38,7 +38,7 @@ class LostItemAdapter(
         holder.tvCategory.text = item.category
         holder.tvDescription.text = item.description
         holder.tvLocation.text = "📍 地点：${item.location}"
-        holder.tvLosttime.text = "⏰ 时间：${item.losttime}"
+        holder.tvLosttime.text = "⏰ 时间：${item.lost_time}"
         // 绑定图片逻辑：如果用户存了照片，我们取第一张作为封面展示
         if (!item.imagePaths.isNullOrEmpty()) {
             holder.ivCover.visibility = View.VISIBLE
