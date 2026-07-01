@@ -35,6 +35,12 @@
         <activity android:name=".PublishCarpoolActivity" />
         <activity android:name=".PublishErrandActivity" />
         <activity android:name=".PublishLostActivity" />
+        <activity
+            android:name=".ForumActivity"
+            android:exported="false"
+            android:label="@string/title_activity_forum"
+            android:theme="@style/Theme.CampusAssistant"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

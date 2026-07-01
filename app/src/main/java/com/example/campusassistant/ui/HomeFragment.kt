@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.example.campusassistant.ForumActivity
 import com.example.campusassistant.LostandFoundActivity
 import com.example.campusassistant.R
 
@@ -20,6 +21,11 @@ class HomeFragment : Fragment() {
 
         view.findViewById<View>(R.id.lost_found_entry).setOnClickListener {
             val intent = Intent(requireContext(), LostandFoundActivity::class.java)
+            startActivity(intent)
+        }
+
+        view.findViewById<View>(R.id.forum).setOnClickListener {
+            val intent = Intent(requireContext(), ForumActivity::class.java)
             startActivity(intent)
         }
 
