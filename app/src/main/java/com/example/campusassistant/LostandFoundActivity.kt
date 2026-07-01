@@ -39,6 +39,9 @@ class LostandFoundActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lost_and_found)
 
+        // 返回按钮（与论坛模块风格一致）
+        findViewById<TextView>(R.id.btn_back).setOnClickListener { finish() }
+
         // 3. 初始化 Room 数据库组件
         lostItemDao = AppDatabase.getDatabase(this).lostItemDao()
 
