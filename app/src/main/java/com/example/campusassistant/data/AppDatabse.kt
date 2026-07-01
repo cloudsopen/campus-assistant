@@ -12,9 +12,10 @@ import androidx.room.TypeConverters
         IdleItem::class,
         BuyRequest::class,
         CarpoolInfo::class,
-        ErrandTask::class
+        ErrandTask::class,
+        ForumPost::class
     ],
-    version = 2, // 升级版本号
+    version = 3, // 升级版本号（加入论坛帖子表）
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -25,6 +26,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun buyRequestDao(): BuyRequestDao
     abstract fun carpoolInfoDao(): CarpoolInfoDao
     abstract fun errandTaskDao(): ErrandTaskDao
+    abstract fun forumPostDao(): ForumPostDao
 
     companion object {
         @Volatile
