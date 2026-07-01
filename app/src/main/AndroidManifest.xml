@@ -28,8 +28,16 @@
             android:theme="@style/Theme.CampusAssistant"
             android:windowSoftInputMode="adjustResize" />
         <activity
+            android:name=".IdleHallActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CampusAssistant" />
+        <activity
             android:name=".LostandFoundAddActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.AuthActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CampusAssistant" />
         <activity android:name=".PublishIdleActivity" />
         <activity android:name=".PublishBuyActivity" />
         <activity android:name=".PublishCarpoolActivity" />
