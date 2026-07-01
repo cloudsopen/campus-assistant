@@ -27,11 +27,12 @@ class PublishErrandActivity : AppCompatActivity() {
         
         findViewById<TextView>(R.id.btn_publish).setOnClickListener {
             val title = findViewById<EditText>(R.id.et_title).text.toString().trim()
+            val location = findViewById<EditText>(R.id.et_location).text.toString().trim()
             val desc = findViewById<EditText>(R.id.et_description).text.toString().trim()
             val rewardStr = findViewById<EditText>(R.id.et_reward).text.toString().trim()
             val deadline = findViewById<EditText>(R.id.et_deadline).text.toString().trim()
             
-            if (title.isEmpty() || desc.isEmpty() || rewardStr.isEmpty()) {
+            if (title.isEmpty() || location.isEmpty() || desc.isEmpty() || rewardStr.isEmpty()) {
                 Toast.makeText(this, "请完善任务信息", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -40,12 +41,15 @@ class PublishErrandActivity : AppCompatActivity() {
             
             lifecycleScope.launch(Dispatchers.IO) {
                 val task = ErrandTask(
+                    userId = com.example.campusassistant.ui.UserSessionManager.getUserId(this@PublishErrandActivity),
                     title = title,
+                    location = location,
                     description = desc,
                     reward = reward,
                     deadline = deadline,
-                    category = "代办事项", // 您也可以在这里添加一个 Spinner 让用户选择具体分类
-                    status = 0
+                    category = "代办事项",
+                    status = 0,
+                    publisher = com.example.campusassistant.ui.UserSessionManager.getDisplayName(this@PublishErrandActivity)
                 )
                 db.errandTaskDao().insertTask(task)
                 withContext(Dispatchers.Main) {

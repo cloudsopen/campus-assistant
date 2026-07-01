@@ -30,6 +30,14 @@
         android:spinnerMode="dropdown" android:layout_marginBottom="16dp"/>
 
     <EditText
+        android:id="@+id/et_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="请输入标题（如：捡到一个钱包）"
+        android:maxLength="30"
+        android:layout_marginBottom="16dp"/>
+
+    <EditText
         android:id="@+id/et_location"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

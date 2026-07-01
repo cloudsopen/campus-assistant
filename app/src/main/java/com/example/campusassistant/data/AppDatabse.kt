@@ -8,6 +8,7 @@ import androidx.room.TypeConverters
 
 @Database(
     entities = [
+        User::class,
         LostItem::class,
         IdleItem::class,
         BuyRequest::class,
@@ -16,12 +17,13 @@ import androidx.room.TypeConverters
         ForumPost::class,
         ForumReply::class
     ],
-    version = 5, // 升级版本号：更新 ErrandTask 结构
+    version = 9, // 升级版本号：移除 User 中的 tag 字段
     exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
+    abstract fun userDao(): UserDao
     abstract fun lostItemDao(): LostItemDao
     abstract fun idleItemDao(): IdleItemDao
     abstract fun buyRequestDao(): BuyRequestDao

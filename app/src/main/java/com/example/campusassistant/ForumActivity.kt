@@ -185,12 +185,18 @@ fun PostListScreen(
     }
 
     if (showAddDialog) {
+        val context = androidx.compose.ui.platform.LocalContext.current
         AddPostDialog(
             onDismiss = { showAddDialog = false },
             onPost = { title, category, content ->
                 scope.launch(Dispatchers.IO) {
-                    forumDao.insertPost(ForumPost(title = title, content = content,
-                                                   author = null, category = category))
+                    forumDao.insertPost(ForumPost(
+                        userId = com.example.campusassistant.ui.UserSessionManager.getUserId(context),
+                        title = title, 
+                        content = content,
+                        author = com.example.campusassistant.ui.UserSessionManager.getDisplayName(context), 
+                        category = category
+                    ))
                     withContext(Dispatchers.Main) {
                         onShowToast("发布成功！")
                         showAddDialog = false
@@ -256,6 +262,7 @@ fun PostDetailScreen(
     onBack: () -> Unit,
     onShowToast: (String) -> Unit
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
     var post by remember { mutableStateOf<ForumPost?>(null) }
     var replies by remember { mutableStateOf<List<ForumReply>>(emptyList()) }
     var replyCount by remember { mutableIntStateOf(0) }
@@ -316,9 +323,10 @@ fun PostDetailScreen(
                             scope.launch(Dispatchers.IO) {
                                 val maxFloor = replyDao.getMaxFloorNumber(postId)
                                 val reply = ForumReply(
+                                    userId = com.example.campusassistant.ui.UserSessionManager.getUserId(context),
                                     postId = postId,
                                     content = replyText.trim(),
-                                    author = null,
+                                    author = com.example.campusassistant.ui.UserSessionManager.getDisplayName(context),
                                     floorNumber = maxFloor + 1
                                 )
                                 replyDao.insertReply(reply)

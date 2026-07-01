@@ -7,10 +7,9 @@ object UserSessionManager {
     private const val PREFS_NAME = "campus_user_session"
     private const val KEY_LOGGED_IN = "logged_in"
     private const val KEY_USERNAME = "username"
-    private const val KEY_TAG = "tag"
-    private const val KEY_BADGE = "badge"
     private const val KEY_BALANCE = "balance"
     private const val KEY_ORDERS = "orders"
+    private const val KEY_USER_ID = "user_id"
 
     private fun prefs(context: Context) =
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -19,23 +18,23 @@ object UserSessionManager {
     fun isLoggedIn(context: Context): Boolean = prefs(context).getBoolean(KEY_LOGGED_IN, false)
 
     @JvmStatic
-    fun login(context: Context, username: String, tag: String?) {
-        val cleanName = username.trim().ifEmpty { "校园用户" }
-        val cleanTag = tag?.trim().takeUnless { it.isNullOrEmpty() } ?: "在校用户"
+    fun login(context: Context, user: com.example.campusassistant.data.User) {
+        val cleanName = user.username.trim().ifEmpty { "校园用户" }
         val seed = abs(cleanName.hashCode())
         val balance = ((seed % 5000) / 10.0) + 20
         val orders = seed % 5
-        val badge = if (seed % 2 == 0) "♂" else "♀"
 
         prefs(context).edit()
             .putBoolean(KEY_LOGGED_IN, true)
+            .putLong(KEY_USER_ID, user.id)
             .putString(KEY_USERNAME, cleanName)
-            .putString(KEY_TAG, cleanTag)
-            .putString(KEY_BADGE, badge)
             .putString(KEY_BALANCE, String.format("%.2f", balance))
             .putInt(KEY_ORDERS, orders)
             .apply()
     }
+
+    @JvmStatic
+    fun getUserId(context: Context): Long = prefs(context).getLong(KEY_USER_ID, -1L)
 
     @JvmStatic
     fun logout(context: Context) {
@@ -45,14 +44,6 @@ object UserSessionManager {
     @JvmStatic
     fun getDisplayName(context: Context): String =
         prefs(context).getString(KEY_USERNAME, "点击登录") ?: "点击登录"
-
-    @JvmStatic
-    fun getIdentityTag(context: Context): String =
-        prefs(context).getString(KEY_TAG, "未登录用户") ?: "未登录用户"
-
-    @JvmStatic
-    fun getBadgeSymbol(context: Context): String =
-        prefs(context).getString(KEY_BADGE, "•") ?: "•"
 
     @JvmStatic
     fun getAvatarLabel(context: Context): String {

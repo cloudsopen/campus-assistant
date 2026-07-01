@@ -19,6 +19,7 @@ class LostItemAdapter(
     // 内部类：用来持有小方块里各个组件的引用
     class LostViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val ivCover: ImageView = view.findViewById(R.id.iv_item_cover)
+        val tvTitle: TextView = view.findViewById(R.id.tv_item_title)
         val tvCategory: TextView = view.findViewById(R.id.tv_item_category)
         val tvDescription: TextView = view.findViewById(R.id.tv_item_description)
         val tvLocation: TextView = view.findViewById(R.id.tv_item_location)
@@ -35,6 +36,7 @@ class LostItemAdapter(
         val item = itemList[position]
 
         // 绑定文字数据
+        holder.tvTitle.text = item.title
         holder.tvCategory.text = item.category
         holder.tvDescription.text = item.description
         holder.tvLocation.text = "📍 地点：${item.location}"

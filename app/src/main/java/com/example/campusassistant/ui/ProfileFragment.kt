@@ -46,20 +46,7 @@ class ProfileFragment : Fragment() {
         view.findViewById<View>(R.id.profile_orders_card).setOnClickListener {
             showToast("订单功能后续接入")
         }
-        view.findViewById<View>(R.id.profile_action_charge).setOnClickListener {
-            showToast("赞赏功能后续接入")
-        }
-        view.findViewById<View>(R.id.profile_action_products).setOnClickListener {
-            showToast("其他产品页后续接入")
-        }
         view.findViewById<View>(R.id.profile_action_settings).setOnClickListener(authClick)
-        view.findViewById<View>(R.id.profile_action_share).setOnClickListener {
-            val intent = Intent(Intent.ACTION_SEND).apply {
-                type = "text/plain"
-                putExtra(Intent.EXTRA_TEXT, "我在使用“一起乐校园”，欢迎一起体验校园闲置和互助功能。")
-            }
-            startActivity(Intent.createChooser(intent, "分享应用"))
-        }
         view.findViewById<TextView>(R.id.logout_button).setOnClickListener {
             if (UserSessionManager.isLoggedIn(requireContext())) {
                 UserSessionManager.logout(requireContext())
@@ -85,10 +72,6 @@ class ProfileFragment : Fragment() {
 
         view.findViewById<TextView>(R.id.profile_name).text =
             UserSessionManager.getDisplayName(requireContext())
-        view.findViewById<TextView>(R.id.profile_tag).text =
-            UserSessionManager.getIdentityTag(requireContext())
-        view.findViewById<TextView>(R.id.profile_badge).text =
-            UserSessionManager.getBadgeSymbol(requireContext())
         view.findViewById<TextView>(R.id.profile_avatar).text =
             UserSessionManager.getAvatarLabel(requireContext())
         view.findViewById<TextView>(R.id.profile_balance).text =

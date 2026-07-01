@@ -8,6 +8,7 @@ data class ForumReply(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
 
+    val userId: Long,
     val postId: Long,           // 所属帖子 ID
     val content: String,        // 评论内容
     val author: String?,        // 评论者（可匿名）

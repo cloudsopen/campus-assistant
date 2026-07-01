@@ -7,11 +7,13 @@ import androidx.room.PrimaryKey
 data class CarpoolInfo(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
+    val userId: Long,
     val publisher: String?,
     val departure: String,
     val destination: String,
     val departureTime: Long,
     val seats: Int,
+    val price: Double = 0.0,
     val description: String?,
     val publishTime: Long = System.currentTimeMillis()
 )

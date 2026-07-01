@@ -105,6 +105,21 @@
                     android:paddingVertical="8dp"
                     android:textSize="16sp" />
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="8dp"
+                    android:background="#EEEEEE" />
+
+                <EditText
+                    android:id="@+id/et_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:hint="备注信息 (如：不准抽烟，有行李请告知)"
+                    android:paddingVertical="8dp"
+                    android:textSize="14sp" />
+
             </LinearLayout>
 
             <!-- Seats & Price Card -->

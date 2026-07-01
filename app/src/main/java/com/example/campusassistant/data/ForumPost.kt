@@ -8,6 +8,7 @@ data class ForumPost(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
 
+    val userId: Long,
     val title: String,          // 帖子标题
     val content: String,        // 帖子正文
     val author: String?,        // 发布者（可匿名）

@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.campusassistant.data.AppDatabase // 引入你的数据库
 import com.example.campusassistant.data.LostItem
 import com.example.campusassistant.data.LostItemDao  // 引入你的数据接口
+import com.example.campusassistant.ui.LostandFoundAddActivity
 import com.example.campusassistant.ui.NavAdapter      // 保持你写好的顶部导航适配器
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
@@ -112,6 +113,7 @@ class LostandFoundActivity : AppCompatActivity() {
 
             // 绑定各个控件
             val tvClose: TextView = view.findViewById(R.id.tv_dialog_close)
+            val tvTitle: TextView = view.findViewById(R.id.tv_detail_title)
             val hsvImages: HorizontalScrollView = view.findViewById(R.id.hsv_images)
             val layoutImages: LinearLayout = view.findViewById(R.id.layout_detail_images)
             val tvCategory: TextView = view.findViewById(R.id.tv_detail_category)
@@ -153,6 +155,7 @@ class LostandFoundActivity : AppCompatActivity() {
             }
 
             // 填充文字信息
+            tvTitle.text = item.title
             tvCategory.text = item.category
             tvDescription.text = item.description
             tvLocation.text = item.location

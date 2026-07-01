@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 data class BuyRequest(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
+    val userId: Long,
     val publisher: String?,
     val title: String,
     val description: String,

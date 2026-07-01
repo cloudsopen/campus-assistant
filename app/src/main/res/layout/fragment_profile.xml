@@ -32,19 +32,6 @@
                     android:textSize="26sp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="88dp"
-                    android:layout_height="36dp"
-                    android:layout_gravity="top|end"
-                    android:layout_marginTop="42dp"
-                    android:layout_marginEnd="18dp"
-                    android:background="@drawable/bg_capsule_white"
-                    android:gravity="center"
-                    android:text="•••   ○"
-                    android:textColor="#111827"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
                 <LinearLayout
                     android:id="@+id/profile_entry_area"
                     android:layout_width="match_parent"
@@ -90,30 +77,7 @@
                                 android:textColor="@android:color/white"
                                 android:textSize="32sp"
                                 android:textStyle="bold" />
-
-                            <TextView
-                                android:id="@+id/profile_badge"
-                                android:layout_width="34dp"
-                                android:layout_height="34dp"
-                                android:layout_marginStart="8dp"
-                                android:background="@drawable/bg_profile_badge"
-                                android:gravity="center"
-                                android:text="♂"
-                                android:textColor="@android:color/white"
-                                android:textSize="20sp"
-                                android:textStyle="bold" />
                         </LinearLayout>
-
-                        <TextView
-                            android:id="@+id/profile_tag"
-                            android:layout_width="112dp"
-                            android:layout_height="34dp"
-                            android:layout_marginTop="10dp"
-                            android:background="@drawable/bg_user_tag"
-                            android:gravity="center"
-                            android:text="在校用户"
-                            android:textColor="@android:color/white"
-                            android:textSize="18sp" />
 
                         <TextView
                             android:id="@+id/btn_switch_account"
@@ -295,36 +259,6 @@
                 android:background="@drawable/bg_capsule_white"
                 android:elevation="3dp"
                 android:orientation="vertical">
-
-                <include
-                    android:id="@+id/profile_action_charge"
-                    layout="@layout/item_profile_action_charge" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginStart="24dp"
-                    android:background="#EEF0F4" />
-
-                <include
-                    android:id="@+id/profile_action_share"
-                    layout="@layout/item_profile_action_share" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginStart="24dp"
-                    android:background="#EEF0F4" />
-
-                <include
-                    android:id="@+id/profile_action_products"
-                    layout="@layout/item_profile_action_products" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginStart="24dp"
-                    android:background="#EEF0F4" />
 
                 <include
                     android:id="@+id/profile_action_settings"

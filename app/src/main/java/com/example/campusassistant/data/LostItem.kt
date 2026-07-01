@@ -8,7 +8,11 @@ data class LostItem(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
 
+    val userId: Long,
+
     val publisher: String?,
+
+    val title: String,
 
     val location: String,
 
