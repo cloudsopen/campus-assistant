@@ -137,7 +137,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="校园认证"
+                        android:text="发布需求"
                         android:textColor="#222222"
                         android:textSize="18sp"
                         android:textStyle="bold"/>

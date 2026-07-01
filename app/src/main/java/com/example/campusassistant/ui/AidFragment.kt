@@ -11,143 +11,108 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.campusassistant.R
 class AidFragment : Fragment() {
-    // 第二层跳转按钮
     private var rlHeroPlaza: View? = null
     private var rlAuth: View? = null
 
-    // 第三层分类按钮
     private var llExpress: LinearLayout? = null
     private var llTakeout: LinearLayout? = null
     private var llShop: LinearLayout? = null
 
-    // 第四层动态文本
     private var tvRecordCount: TextView? = null
     private var tvTag: TextView? = null
     private var tvTitle: TextView? = null
     private var tvLocation: TextView? = null
     private var tvTimeLimit: TextView? = null
+    private var tvMoney: TextView? = null // 提前绑定报酬控件
+
+    private companion object {
+        const val TAB_EXPRESS = 0
+        const val TAB_TAKEOUT = 1
+        const val TAB_SHOP = 2
+        const val COLOR_NORMAL = "#333333"
+        const val COLOR_SELECT = "#00C853"
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        val root: View = inflater.inflate(R.layout.fragment_aid, container, false)
+    ): View? {
+        val root = inflater.inflate(R.layout.fragment_aid, container, false)
         initView(root)
         initClick()
-        // 默认选中代取快递
-        selectTab(0)
+        selectTab(TAB_EXPRESS)
         return root
     }
 
-    // 绑定控件
     private fun initView(root: View) {
-        rlHeroPlaza = root.findViewById<View?>(R.id.rl_hero_plaza)
-        rlAuth = root.findViewById<View?>(R.id.rl_auth)
+        rlHeroPlaza = root.findViewById(R.id.rl_hero_plaza)
+        rlAuth = root.findViewById(R.id.rl_auth)
 
-        llExpress = root.findViewById<LinearLayout?>(R.id.ll_express)
-        llTakeout = root.findViewById<LinearLayout?>(R.id.ll_takeout)
-        llShop = root.findViewById<LinearLayout?>(R.id.ll_shop)
+        llExpress = root.findViewById(R.id.ll_express)
+        llTakeout = root.findViewById(R.id.ll_takeout)
+        llShop = root.findViewById(R.id.ll_shop)
 
-        tvRecordCount = root.findViewById<TextView?>(R.id.tv_record_count)
-        tvTag = root.findViewById<TextView?>(R.id.tv_tag)
-        tvTitle = root.findViewById<TextView?>(R.id.tv_title)
-        tvLocation = root.findViewById<TextView?>(R.id.tv_location)
-        tvTimeLimit = root.findViewById<TextView?>(R.id.tv_time_limit)
+        tvRecordCount = root.findViewById(R.id.tv_record_count)
+        tvTag = root.findViewById(R.id.tv_tag)
+        tvTitle = root.findViewById(R.id.tv_title)
+        tvLocation = root.findViewById(R.id.tv_location)
+        tvTimeLimit = root.findViewById(R.id.tv_time_limit)
+        tvMoney = root.findViewById(R.id.tv_money) // 一次性绑定
     }
 
-    // 绑定点击事件
     private fun initClick() {
-        // 跳转页面按钮
-        rlHeroPlaza!!.setOnClickListener(View.OnClickListener { v: View? ->
-            // 跳转到英雄广场页面
-            val intent: Intent = Intent(getActivity(), HeroPlazaActivity::class.java)
-            startActivity(intent)
-        })
-        rlAuth!!.setOnClickListener(View.OnClickListener { v: View? ->
-            // 跳转到校园认证页面
-            val intent: Intent = Intent(getActivity(), AuthActivity::class.java)
-            startActivity(intent)
-        })
+        rlHeroPlaza?.setOnClickListener {
+            startActivity(Intent(requireActivity(), HeroPlazaActivity::class.java))
+        }
+        rlAuth?.setOnClickListener {
+            startActivity(Intent(requireActivity(), AuthActivity::class.java))
+        }
 
-        // 分类切换Tab
-        llExpress!!.setOnClickListener(View.OnClickListener { v: View? -> selectTab(0) })
-        llTakeout!!.setOnClickListener(View.OnClickListener { v: View? -> selectTab(1) })
-        llShop!!.setOnClickListener(View.OnClickListener { v: View? -> selectTab(2) })
+        llExpress?.setOnClickListener { selectTab(TAB_EXPRESS) }
+        llTakeout?.setOnClickListener { selectTab(TAB_TAKEOUT) }
+        llShop?.setOnClickListener { selectTab(TAB_SHOP) }
     }
 
-    /**
-     * 切换分类Tab，修改文字颜色 + 更新第四层内容
-     * @param index 0快递 1外卖 2代买
-     */
     private fun selectTab(index: Int) {
-        // 重置全部文字为黑色
-        setTabTextColor(llExpress!!, "#333333")
-        setTabTextColor(llTakeout!!, "#333333")
-        setTabTextColor(llShop!!, "#333333")
+        llExpress?.let { setTabTextColor(it, COLOR_NORMAL) }
+        llTakeout?.let { setTabTextColor(it, COLOR_NORMAL) }
+        llShop?.let { setTabTextColor(it, COLOR_NORMAL) }
 
-        // 选中项文字改为绿色
         when (index) {
-            0 -> {
-                setTabTextColor(llExpress!!, "#00C853")
-                updateContent(
-                    "快递",
-                    "共3条记录",
-                    "取快递，西区菜鸟驿站，送到宿舍2号楼",
-                    "西区菜鸟驿站 → 2号宿舍楼",
-                    "截止：今日18:00",
-                    "¥3"
-                )
+            TAB_EXPRESS -> {
+                llExpress?.let { setTabTextColor(it, COLOR_SELECT) }
+                updateContent("快递", "共3条记录", "取快递，西区菜鸟驿站，送到宿舍2号楼", "西区菜鸟驿站 → 2号宿舍楼", "截止：今日18:00", "¥3")
             }
-
-            1 -> {
-                setTabTextColor(llTakeout!!, "#00C853")
-                updateContent(
-                    "外卖",
-                    "共5条记录",
-                    "帮忙取校门口奶茶店外卖，送到5栋宿舍",
-                    "校门口奶茶店 → 5号宿舍楼",
-                    "截止：中午12:30",
-                    "¥2"
-                )
+            TAB_TAKEOUT -> {
+                llTakeout?.let { setTabTextColor(it, COLOR_SELECT) }
+                updateContent("外卖", "共5条记录", "帮忙取校门口奶茶店外卖，送到5栋宿舍", "校门口奶茶店 → 5号宿舍楼", "截止：中午12:30", "¥2")
             }
-
-            2 -> {
-                setTabTextColor(llShop!!, "#00C853")
-                updateContent(
-                    "代买",
-                    "共2条记录",
-                    "超市代买矿泉水+面包，送到3栋",
-                    "校内超市 → 3号宿舍楼",
-                    "截止：今晚21:00",
-                    "¥4"
-                )
+            TAB_SHOP -> {
+                llShop?.let { setTabTextColor(it, COLOR_SELECT) }
+                updateContent("代买", "共2条记录", "超市代买矿泉水+面包，送到3栋", "校内超市 → 3号宿舍楼", "截止：今晚21:00", "¥4")
             }
         }
     }
 
-    // 修改Tab内部文字颜色
-    private fun setTabTextColor(tabLayout: LinearLayout, colorHex: String?) {
+    private fun setTabTextColor(tabLayout: LinearLayout, colorHex: String) {
         val text = tabLayout.getChildAt(1) as TextView
         text.setTextColor(Color.parseColor(colorHex))
     }
 
-    // 更新第四层卡片所有内容
     private fun updateContent(
-        tag: String?,
-        count: String?,
-        title: String?,
-        location: String?,
-        time: String?,
-        money: String?
+        tag: String,
+        count: String,
+        title: String,
+        location: String,
+        time: String,
+        money: String
     ) {
-        tvRecordCount!!.setText(count)
-        tvTag!!.setText(tag)
-        tvTitle!!.setText(title)
-        tvLocation!!.setText(location)
-        tvTimeLimit!!.setText(time)
-        // 报酬文字替换
-        tvRecordCount!!.setText(count)
-        (getView()!!.findViewById<View?>(R.id.tv_money) as TextView).setText("报酬 " + money)
+        tvRecordCount?.text = count
+        tvTag?.text = tag
+        tvTitle?.text = title
+        tvLocation?.text = location
+        tvTimeLimit?.text = time
+        tvMoney?.text = "报酬 $money"
     }
 }
